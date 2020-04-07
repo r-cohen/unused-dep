@@ -11,4 +11,7 @@ class Flags {
 
     @Parameter(names = "-gradletask", description = "The gradle task to run upon each dependency removal test")
     String gradleTask = ":app:assembleDebug";
+
+    @Parameter(names = "-skip", description = "Comma separated list of dependencies to skip")
+    String skipDependencies = "";
 }

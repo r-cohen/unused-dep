@@ -13,7 +13,8 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Main {
-    private static final String version = "1.0.0";
+    private static final String version = "1.1.0";
+    private static final ArrayList<String> skippedDependencies = new ArrayList<>();
 
     public static void main(String[] args) {
         // parse command line flags
@@ -35,6 +36,13 @@ public class Main {
         if (!gradleWrapperExists()) {
             exitWithError(new Exception("gradlew not found"));
             return;
+        }
+
+        if (!cliFlags.skipDependencies.isEmpty()) {
+            String[] dependenciesToSkip = cliFlags.skipDependencies.split(",");
+            for (String s : dependenciesToSkip) {
+                skippedDependencies.add(s.trim());
+            }
         }
 
         // confirmation from user
@@ -71,9 +79,13 @@ public class Main {
                 Runtime.getRuntime().addShutdownHook(shutdownHookThread);
 
                 parser.getDependencies().forEach(dependency -> {
-                    System.out.printf("\t|_ %s\n", dependency.getMethodCall());
+                    boolean skipDependency = shouldSkipDependency(dependency);
+                    System.out.printf("\t|_ %s%s\n", dependency.getMethodCall(), skipDependency ? " --> SKIPPED" : "");
+                    if (skipDependency) {
+                        return; // forEach stream
+                    }
 
-                    // remove dependency from file
+                    // remove dependency from file from original file content
                     parser.removeDependencyBlock(dependency);
 
                     // launch gradle task(s)
@@ -148,5 +160,14 @@ public class Main {
             List<String> dependencies = unusedDependencies.get(filepath);
             dependencies.forEach(dependency -> System.out.printf("\t|_ %s", dependency));
         });
+    }
+
+    private static boolean shouldSkipDependency(DependencyFileEntry dependency) {
+        for (String s: skippedDependencies) {
+            if (dependency.getMethodCall().contains(s)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
