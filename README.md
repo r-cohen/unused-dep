@@ -11,3 +11,9 @@ Copy the `unused-dep.jar` file to the root directory where the gradle wrapper (`
 java -jar unused-dep.jar -gradletask :app:assembleDebug
 ```
 Replace `:app:assembleDebug` by any gradle task used in your Android project.
+
+### Filter out dependencies
+It is possible to skip dependencies using the `-skip` flag and provide a comma seperated list of depencies to exclude for the tests. Example:
+```
+java -jar unused-dep.jar -gradletask :app:assembleDebug -skip com.android.support.test:runner:1.0.2,com.android.support:appcompat-v7:28.0.0
+```
