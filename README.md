@@ -17,3 +17,5 @@ It is possible to skip dependencies using the `-skip` flag and provide a comma s
 ```
 java -jar unused-dep.jar -gradletask :app:assembleDebug -skip com.android.support.test:runner:1.0.2,com.android.support:appcompat-v7:28.0.0
 ```
+
+[<img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" height="60" />](https://www.buymeacoffee.com/raphael.cohen)
